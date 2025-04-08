@@ -15,6 +15,20 @@ st.markdown("""
     .stApp, .css-1d391kg, .css-18ni7ap { background-color: #0e1117 !important; color: #fafafa !important; }
     .stDataFrame, .css-1lcbmhc { background-color: #0e1117 !important; color: #fafafa !important; }
     .metric-value, .metric-label { color: #fafafa !important; }
+    @media only screen and (max-width: 768px) {
+        .block-container {
+            padding: 1rem 0.5rem !important;
+        }
+        .css-1l02zno, .css-18ni7ap {
+            padding: 1rem 0.5rem !important;
+        }
+        .stDataFrame {
+            font-size: 0.8rem;
+        }
+        .element-container:has(.metric) {
+            margin-bottom: 1rem !important;
+        }
+    }
     </style>
 """, unsafe_allow_html=True)
 
