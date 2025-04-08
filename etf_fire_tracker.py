@@ -10,16 +10,19 @@ st.set_page_config(page_title="ETF FIRE Tracker", layout="wide")
 
 # --- Theme Toggle ---
 theme = st.sidebar.radio("Theme", ["Light", "Dark"], index=1)
+
 if theme == "Light":
     st.markdown("""
         <style>
-        body, .stApp { background-color: #ffffff; color: #000000; }
+        .stApp, .css-1d391kg, .css-18ni7ap { background-color: #ffffff !important; color: #000000 !important; }
+        .stDataFrame, .css-1lcbmhc { background-color: #ffffff !important; color: #000000 !important; }
         </style>
     """, unsafe_allow_html=True)
 else:
     st.markdown("""
         <style>
-        body, .stApp { background-color: #0e1117; color: #fafafa; }
+        .stApp, .css-1d391kg, .css-18ni7ap { background-color: #0e1117 !important; color: #fafafa !important; }
+        .stDataFrame, .css-1lcbmhc { background-color: #0e1117 !important; color: #fafafa !important; }
         </style>
     """, unsafe_allow_html=True)
 
