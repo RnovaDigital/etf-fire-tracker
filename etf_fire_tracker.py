@@ -1,14 +1,17 @@
-# ETF FIRE Tracker App (Streamlit)
+# ETF FIRE Tracker App (Streamlit with Financial Modeling Prep)
 
 import streamlit as st
-import yfinance as yf
+import requests
 import pandas as pd
 from datetime import date
-import time  # ⬅️ Added to handle rate limiting
+import time
 
 st.set_page_config(page_title="ETF FIRE Tracker", layout="wide")
 st.title("📈 ETF FIRE Tracker - RNovaDigital")
 st.caption("Digital Income. Minimal Time. Maximum Freedom.")
+
+# --- API KEY ---
+FMP_API_KEY = "HzTScTufEDaTQGpJJiuougyy1AtZf6Zg"  # 🔑 Replace with your actual key
 
 # --- Portfolio Setup ---
 st.sidebar.header("Your ETF Portfolio")
@@ -28,24 +31,19 @@ for etf in etfs:
 st.sidebar.header("Your FIRE Goal")
 f_target = st.sidebar.number_input("FIRE Goal ($)", min_value=1000, value=1000000, step=5000)
 
-# --- Fetch Live Prices ---
+# --- Fetch Live Prices from FMP ---
+BASE_URL = "https://financialmodelingprep.com/api/v3/quote/{}?apikey={}"
 today_prices = {}
+
 for etf in etfs:
     try:
-        time.sleep(1.2)  # ⏱ Add delay to avoid hitting Yahoo API limits
-        ticker = yf.Ticker(etf)
-        price = None
+        time.sleep(1)  # Avoid hitting rate limits
+        url = BASE_URL.format(etf, FMP_API_KEY)
+        res = requests.get(url)
+        data = res.json()
 
-        # Try fast_info first
-        if hasattr(ticker, "fast_info") and "last_price" in ticker.fast_info:
-            price = ticker.fast_info["last_price"]
-
-        # Fallback to regularMarketPrice
-        if not price and "regularMarketPrice" in ticker.info:
-            price = ticker.info["regularMarketPrice"]
-
-        if price:
-            today_prices[etf] = price
+        if isinstance(data, list) and data and "price" in data[0]:
+            today_prices[etf] = data[0]["price"]
         else:
             st.warning(f"{etf} returned no price data.")
             today_prices[etf] = 0
