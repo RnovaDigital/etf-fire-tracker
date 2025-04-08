@@ -28,15 +28,29 @@ st.sidebar.header("Your FIRE Goal")
 f_target = st.sidebar.number_input("FIRE Goal ($)", min_value=1000, value=1000000, step=5000)
 
 # --- Fetch Live Prices ---
-try:
-    data = yf.download(etfs, period="1d", interval="1d")["Close"]
-    if data.empty:
-        st.error("Live price data not available. Please try again later.")
-        st.stop()
-    today_prices = data.iloc[-1].to_dict()
-except Exception as e:
-    st.error(f"Failed to fetch ETF prices: {e}")
-    st.stop()
+today_prices = {}
+for etf in etfs:
+    try:
+        ticker = yf.Ticker(etf)
+        price = None
+
+        # Try fast_info first
+        if hasattr(ticker, "fast_info") and "last_price" in ticker.fast_info:
+            price = ticker.fast_info["last_price"]
+
+        # Fallback to regularMarketPrice
+        if not price and "regularMarketPrice" in ticker.info:
+            price = ticker.info["regularMarketPrice"]
+
+        if price:
+            today_prices[etf] = price
+        else:
+            st.warning(f"{etf} returned no price data.")
+            today_prices[etf] = 0
+
+    except Exception as e:
+        st.warning(f"Error fetching data for {etf}: {e}")
+        today_prices[etf] = 0
 
 # --- Display Portfolio Table ---
 portfolio_data = []
