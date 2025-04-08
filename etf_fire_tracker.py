@@ -28,8 +28,15 @@ st.sidebar.header("Your FIRE Goal")
 f_target = st.sidebar.number_input("FIRE Goal ($)", min_value=1000, value=1000000, step=5000)
 
 # --- Fetch Live Prices ---
-data = yf.download(etfs, period="1d", interval="1d")['Close']
-today_prices = data.iloc[-1].to_dict()
+try:
+    data = yf.download(etfs, period="1d", interval="1d")["Close"]
+    if data.empty:
+        st.error("Live price data not available. Please try again later.")
+        st.stop()
+    today_prices = data.iloc[-1].to_dict()
+except Exception as e:
+    st.error(f"Failed to fetch ETF prices: {e}")
+    st.stop()
 
 # --- Display Portfolio Table ---
 portfolio_data = []
