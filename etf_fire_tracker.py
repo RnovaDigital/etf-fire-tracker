@@ -55,6 +55,11 @@ f_target = st.sidebar.number_input("FIRE Goal ($)", min_value=1000, value=100000
 
 # --- Fetch Live Prices ---
 FMP_API_KEY = os.getenv("FMP_API_KEY")
+
+# Warn if no API key found
+if not FMP_API_KEY:
+    st.warning("⚠️ Please create a .env file and add your FMP API key as FMP_API_KEY=your_api_key_here")
+
 today_prices = {}
 
 for etf in etfs:
