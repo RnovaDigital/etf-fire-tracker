@@ -7,6 +7,22 @@ import os
 import requests
 
 st.set_page_config(page_title="ETF FIRE Tracker", layout="wide")
+
+# --- Theme Toggle ---
+theme = st.sidebar.radio("Theme", ["Light", "Dark"], index=1)
+if theme == "Light":
+    st.markdown("""
+        <style>
+        body, .stApp { background-color: #ffffff; color: #000000; }
+        </style>
+    """, unsafe_allow_html=True)
+else:
+    st.markdown("""
+        <style>
+        body, .stApp { background-color: #0e1117; color: #fafafa; }
+        </style>
+    """, unsafe_allow_html=True)
+
 st.title("📈 ETF FIRE Tracker - RNovaDigital")
 st.caption("Digital Income. Minimal Time. Maximum Freedom.")
 
@@ -77,7 +93,14 @@ st.subheader("🔥 FIRE Goal Progress")
 st.metric("Total Invested", f"${total_invested:,.2f}")
 st.metric("Current Value", f"${total_value:,.2f}")
 st.metric("FIRE Goal", f"${f_target:,.0f}")
-st.progress(progress / 100, text=f"{progress}% to FIRE")
+
+# Dynamic color logic
+color = "#ff4b4b" if progress < 25 else "#f9c74f" if progress < 75 else "#4caf50"
+st.markdown(f"""
+    <div style='background-color:{color}; height:24px; border-radius:5px; width:{min(progress, 100)}%; text-align:center; color:white;'>
+        {progress}% to FIRE
+    </div>
+""", unsafe_allow_html=True)
 
 # --- Footer ---
 st.markdown("---")
