@@ -5,6 +5,7 @@ import pandas as pd
 from datetime import date
 import os
 import requests
+import time
 
 st.set_page_config(page_title="ETF FIRE Tracker", layout="wide")
 
@@ -16,6 +17,7 @@ if theme == "Light":
         <style>
         .stApp, .css-1d391kg, .css-18ni7ap { background-color: #ffffff !important; color: #000000 !important; }
         .stDataFrame, .css-1lcbmhc { background-color: #ffffff !important; color: #000000 !important; }
+        .metric-value, .metric-label { color: #000000 !important; }
         </style>
     """, unsafe_allow_html=True)
 else:
@@ -23,6 +25,7 @@ else:
         <style>
         .stApp, .css-1d391kg, .css-18ni7ap { background-color: #0e1117 !important; color: #fafafa !important; }
         .stDataFrame, .css-1lcbmhc { background-color: #0e1117 !important; color: #fafafa !important; }
+        .metric-value, .metric-label { color: #fafafa !important; }
         </style>
     """, unsafe_allow_html=True)
 
@@ -56,6 +59,7 @@ for etf in etfs:
         url = f"https://financialmodelingprep.com/api/v3/quote/{etf}?apikey={FMP_API_KEY}"
         response = requests.get(url)
         data = response.json()
+        time.sleep(1)  # rate-limit friendly
 
         if response.status_code == 200 and data:
             price = data[0].get("price", 0)
@@ -100,7 +104,7 @@ st.metric("FIRE Goal", f"${f_target:,.0f}")
 # Dynamic color logic
 color = "#ff4b4b" if progress < 25 else "#f9c74f" if progress < 75 else "#4caf50"
 st.markdown(f"""
-    <div style='background-color:{color}; height:24px; border-radius:5px; width:{min(progress, 100)}%; text-align:center; color:white;'>
+    <div style='background-color:{color}; height:24px; border-radius:5px; width:{min(progress, 100)}%; text-align:center; color:white; font-weight:bold;'>
         {progress}% to FIRE
     </div>
 """, unsafe_allow_html=True)
