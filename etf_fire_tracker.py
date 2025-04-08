@@ -4,6 +4,7 @@ import streamlit as st
 import yfinance as yf
 import pandas as pd
 from datetime import date
+import time  # ⬅️ Added to handle rate limiting
 
 st.set_page_config(page_title="ETF FIRE Tracker", layout="wide")
 st.title("📈 ETF FIRE Tracker - RNovaDigital")
@@ -31,6 +32,7 @@ f_target = st.sidebar.number_input("FIRE Goal ($)", min_value=1000, value=100000
 today_prices = {}
 for etf in etfs:
     try:
+        time.sleep(1.2)  # ⏱ Add delay to avoid hitting Yahoo API limits
         ticker = yf.Ticker(etf)
         price = None
 
