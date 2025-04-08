@@ -1,17 +1,14 @@
-# ETF FIRE Tracker App (Streamlit with Financial Modeling Prep)
+# ETF FIRE Tracker App (Streamlit)
 
 import streamlit as st
-import requests
 import pandas as pd
 from datetime import date
-import time
+import os
+import requests
 
 st.set_page_config(page_title="ETF FIRE Tracker", layout="wide")
 st.title("📈 ETF FIRE Tracker - RNovaDigital")
 st.caption("Digital Income. Minimal Time. Maximum Freedom.")
-
-# --- API KEY ---
-FMP_API_KEY = "HzTScTufEDaTQGpJJiuougyy1AtZf6Zg"  # 🔑 Replace with your actual key
 
 # --- Portfolio Setup ---
 st.sidebar.header("Your ETF Portfolio")
@@ -31,23 +28,22 @@ for etf in etfs:
 st.sidebar.header("Your FIRE Goal")
 f_target = st.sidebar.number_input("FIRE Goal ($)", min_value=1000, value=1000000, step=5000)
 
-# --- Fetch Live Prices from FMP ---
-BASE_URL = "https://financialmodelingprep.com/api/v3/quote/{}?apikey={}"
+# --- Fetch Live Prices ---
+FMP_API_KEY = os.getenv("FMP_API_KEY")
 today_prices = {}
 
 for etf in etfs:
     try:
-        time.sleep(1)  # Avoid hitting rate limits
-        url = BASE_URL.format(etf, FMP_API_KEY)
-        res = requests.get(url)
-        data = res.json()
+        url = f"https://financialmodelingprep.com/api/v3/quote/{etf}?apikey={FMP_API_KEY}"
+        response = requests.get(url)
+        data = response.json()
 
-        if isinstance(data, list) and data and "price" in data[0]:
-            today_prices[etf] = data[0]["price"]
+        if response.status_code == 200 and data:
+            price = data[0].get("price", 0)
+            today_prices[etf] = price
         else:
             st.warning(f"{etf} returned no price data.")
             today_prices[etf] = 0
-
     except Exception as e:
         st.warning(f"Error fetching data for {etf}: {e}")
         today_prices[etf] = 0
