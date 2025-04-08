@@ -174,5 +174,4 @@ st.progress(progress / 100, text=f"{progress}% to FIRE")
 
 # --- Footer ---
 st.markdown("---")
-17cb697e36b300ca3d660db556ef4fe3a588c49f
 st.markdown("Made with ❤️ by [RnovaDigital](https://www.rnovadigital.com)")
